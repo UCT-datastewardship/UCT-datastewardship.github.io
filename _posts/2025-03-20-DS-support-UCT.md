@@ -4,6 +4,7 @@ title: "Data Stewardship Support at UCT Prague"
 date: 2025-03-20
 categories: [Data Stewardship, Open Science, Research Data]
 tags: [FAIR, RDM, Zenodo, Data Management]
+author: "Martin Schätz"
 ---
 
 The University of Chemistry and Technology, Prague (UCT Prague), is committed to promoting Open Science principles, ensuring that research data is managed effectively and is Findable, Accessible, Interoperable, and Reusable (FAIR). Our **Data Stewardship support team** offers comprehensive assistance to researchers in achieving these goals.
