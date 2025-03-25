@@ -91,9 +91,10 @@ yearly_stats_table = pn.widgets.DataFrame(yearly_stats, name="Yearly Statistics"
 intro_text = pn.pane.HTML(
     """
     <div style="color: black; font-family: Arial; font-size: 16px;">
-        <h1>UCT Community Dashboard at Zenodo</h1>
+        <h1>UCT Zenodo Community Dashboard</h1>
         <p>This dashboard provides <b>yearly</b> and <b>cumulative insights</b> for the UCT Community on Zenodo.</p>
         <p>Explore the bar charts, line trends, and detailed tables below.</p>
+        <p>Return to <a href="https://uct-datastewardship.github.io/">UCT Data Stewardship</a> blog</p>
     </div>
     """
 )
