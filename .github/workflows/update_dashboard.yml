@@ -39,8 +39,8 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         
-        git fetch origin AutoGen
-        git checkout AutoGen || git checkout -b AutoGen
+        git fetch origin AutoGen master
+        git checkout AutoGen
         git pull origin AutoGen
         
         git add assets/uct_community_dashboard.html
@@ -50,6 +50,12 @@ jobs:
         else
           git commit -m "Update dashboard: $(date +'%Y-%m-%d')"
           git push origin AutoGen
+          
+          # Merge AutoGen into master
+          git checkout master
+          git pull origin master
+          git merge --no-ff AutoGen -m "Merge AutoGen updates into master"
+          git push origin master
         fi
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}{{ secrets.GITHUB_TOKEN }}
