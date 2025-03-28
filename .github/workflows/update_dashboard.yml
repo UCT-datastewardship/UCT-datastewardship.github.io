@@ -36,11 +36,15 @@ jobs:
     # Step 5: Commit and Push Changes
     - name: Commit and Push Changes
       run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout -b AutoGen || git checkout AutoGen
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+        git fetch origin AutoGen
+        git checkout AutoGen || git checkout -b AutoGen
         git pull origin AutoGen
+        
         git add assets/uct_community_dashboard.html
+        
         if git diff --cached --quiet; then
           echo "No changes to commit."
         else
