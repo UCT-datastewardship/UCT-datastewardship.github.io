@@ -1,23 +1,71 @@
 ---
 layout: default
+title: Tools & Resources
 ---
 
-<h1>Tools</h1>
+<input type="text" id="search" placeholder="Search tools..." />
 
-<input type="text" id="search-box" placeholder="Search tools...">
+<select id="category-filter">
+  <option value="all">All Categories</option>
+  {% assign categories = site.tools | map: "category" | uniq %}
+  {% for category in categories %}
+  <option value="{{ category }}">{{ category | capitalize }}</option>
+  {% endfor %}
+</select>
 
-<ul id="tools-list">
+<ul id="tool-list">
   {% for tool in site.tools %}
-    <li class="tool-item">
-      <h2>{{ tool.title }}</h2>
-      <p>{{ tool.description }}</p>
-      <p>Link: <a href="{{ tool.link }}">{{ tool.link }}</a></p>
-      <p>Cetegory: <strong>{{ tool.category }}</strong></p>
-    </li>
+  <li data-title="{{ tool.title }}" data-category="{{ tool.category }}" data-tags="{{ tool.tags | join: ',' }}">
+    <a href="{{ tool.link }}">{{ tool.title }}</a> - {{ tool.description }}
+  </li>
   {% endfor %}
 </ul>
 
-<script src="{{ site.baseurl }}/assets/js/search.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
+<script>
+  let tools = [
+    {% for tool in site.tools %}
+    {
+      title: "{{ tool.title }}",
+      category: "{{ tool.category }}",
+      description: "{{ tool.description }}",
+      tags: "{{ tool.tags | join: ' ' }}",
+      link: "{{ tool.link }}"
+    },
+    {% endfor %}
+  ];
+
+  let idx = lunr(function () {
+    this.ref("link");
+    this.field("title");
+    this.field("category");
+    this.field("description");
+    this.field("tags");
+
+    tools.forEach(doc => this.add(doc));
+  });
+
+  function filterTools() {
+    let query = document.getElementById("search").value.toLowerCase();
+    let category = document.getElementById("category-filter").value;
+    let list = document.getElementById("tool-list");
+    list.innerHTML = "";
+
+    let filtered = tools.filter(tool => 
+      (category === "all" || tool.category === category) &&
+      (query === "" || tool.title.toLowerCase().includes(query) || tool.tags.toLowerCase().includes(query))
+    );
+
+    filtered.forEach(tool => {
+      let li = document.createElement("li");
+      li.innerHTML = `<a href="${tool.link}">${tool.title}</a> - ${tool.description}`;
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById("search").addEventListener("input", filterTools);
+  document.getElementById("category-filter").addEventListener("change", filterTools);
+</script>
 
 <h2>Contributors</h2>
 
