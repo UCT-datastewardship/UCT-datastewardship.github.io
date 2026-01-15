@@ -8,7 +8,10 @@ pn.extension()
 
 # Define the community ID and API endpoint
 community_id = "uct-prague"  # Replace with the actual community ID
-endpoint = f"https://zenodo.org/api/records/?communities={community_id}&size=1000"  # Fetch up to 1000 records
+#endpoint = f"https://zenodo.org/api/records/?communities={community_id}&size=1000"  # Fetch up to 1000 records
+
+# The modern way to filter by community is using the 'q' parameter
+endpoint = f"https://zenodo.org/api/records?q=communities:{community_id}&size=1000"
 
 # Fetch data
 response = requests.get(endpoint)
