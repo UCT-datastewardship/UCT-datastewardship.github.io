@@ -5,17 +5,24 @@ import hvplot.pandas  # For interactive plotting
 
 pn.extension()
 
-community_id = "uct-prague" # Revert to the user-confirmed community ID
+community_id = "uct-prague" # User-confirmed community ID
 all_records = []
 page = 1
 page_size = 25 # Max page size for Zenodo API
 
 print(f"Fetching data for community: {community_id}")
 
+# Define custom headers including User-Agent
+headers = {
+    "Accept": "application/json",
+    "User-Agent": "UCT-datastewardship/UCT-datastewardship.github.io GH-Actions (+https://github.com/UCT-datastewardship/UCT-datastewardship.github.io)"
+}
+
 while True:
-    endpoint = f"https://zenodo.org/api/records?communities={community_id}&size={page_size}&page={page}"
+    # Use 'q' parameter for community filtering as per user's curl example
+    endpoint = f"https://zenodo.org/api/records?q=communities:{community_id}&size={page_size}&page={page}"
     print(f"Fetching page {page} from: {endpoint}")
-    response = requests.get(endpoint)
+    response = requests.get(endpoint, headers=headers) # Pass custom headers
 
     if response.status_code == 200:
         data = response.json()
