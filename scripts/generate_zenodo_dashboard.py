@@ -3,27 +3,53 @@ import pandas as pd
 import panel as pn
 import hvplot.pandas  # For interactive plotting
 
-# Enable Panel extension
 pn.extension()
 
-# Define the community ID and API endpoint
-community_id = "uct-prague"  # Replace with the actual community ID
-#endpoint = f"https://zenodo.org/api/records/?communities={community_id}&size=1000"  # Fetch up to 1000 records
+community_id = "uct-prague" # Revert to the user-confirmed community ID
+all_records = []
+page = 1
+page_size = 25 # Max page size for Zenodo API
 
-# The modern way to filter by community is using the 'q' parameter
-endpoint = f"https://zenodo.org/api/records?q=communities:{community_id}&size=1000"
+print(f"Fetching data for community: {community_id}")
 
-# Fetch data
-response = requests.get(endpoint)
-if response.status_code == 200:
-    data = response.json()
+while True:
+    endpoint = f"https://zenodo.org/api/records?communities={community_id}&size={page_size}&page={page}"
+    print(f"Fetching page {page} from: {endpoint}")
+    response = requests.get(endpoint)
+
+    if response.status_code == 200:
+        data = response.json()
+        hits = data.get('hits', {}).get('hits', [])
+        if not hits:
+            print("No more records found. Stopping pagination.")
+            break
+        all_records.extend(hits)
+        
+        total_hits = data.get('hits', {}).get('total', 0)
+        print(f"Page {page} fetched {len(hits)} records. Total fetched so far: {len(all_records)} / {total_hits}")
+        
+        if len(all_records) >= total_hits:
+            print("All available records fetched.")
+            break
+
+        page += 1
+    else:
+        print(f"Failed to fetch data at page {page}: Status Code {response.status_code}, Error: {response.text}")
+        # Optionally handle different errors or break the loop
+        break
+
+if all_records:
+    # Assign the aggregated records to the 'data' variable used by subsequent cells
+    data = {'hits': {'hits': all_records}}
+    print(f"Successfully fetched {len(all_records)} records in total.")
 else:
-    print(f"Failed to fetch data: {response.status_code}")
+    print("No records were fetched.")
+    # Exit or handle the case where no data is available
     exit()
 
 # Extract relevant information
 records = []
-for item in data['hits']['hits']:
+for item in all_records:
     metadata = item.get('metadata', {})
     stats = item.get('stats', {})
     records.append({
